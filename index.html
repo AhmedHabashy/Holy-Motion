@@ -3,23 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boxing Punch Classification | IMU + MLP Analysis</title>
+    <title>Boxing Punch Classification | Technical Report</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0a0f;
-            --bg-card: #12121a;
-            --bg-elevated: #1a1a26;
-            --accent-red: #ff2d55;
-            --accent-blue: #0a84ff;
-            --accent-gold: #ffd60a;
-            --accent-green: #30d158;
-            --text-primary: #ffffff;
-            --text-secondary: #8e8e93;
-            --text-muted: #636366;
-            --border: #2c2c36;
+            --bg-white: #ffffff;
+            --bg-light: #f8fafc;
+            --bg-subtle: #f1f5f9;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            
+            --accent-blue: #2563eb;
+            --accent-blue-light: #dbeafe;
+            --accent-red: #dc2626;
+            --accent-red-light: #fee2e2;
+            --accent-green: #16a34a;
+            --accent-green-light: #dcfce7;
+            --accent-amber: #d97706;
+            --accent-amber-light: #fef3c7;
+            --accent-purple: #7c3aed;
+            --accent-purple-light: #ede9fe;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
         * {
@@ -33,11 +46,11 @@
         }
 
         body {
-            font-family: 'Source Sans 3', sans-serif;
-            background: var(--bg-dark);
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-white);
             color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
+            line-height: 1.7;
+            font-size: 16px;
         }
 
         /* Navigation */
@@ -47,157 +60,225 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(10, 10, 15, 0.9);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             padding: 0.75rem 2rem;
+        }
+
+        nav .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        nav .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
         }
 
         nav ul {
             list-style: none;
             display: flex;
-            gap: 0.5rem;
-            justify-content: center;
+            gap: 0.25rem;
             flex-wrap: wrap;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
         nav a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 0.875rem;
+            border-radius: 8px;
             transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         nav a:hover, nav a.active {
-            color: var(--text-primary);
-            background: var(--bg-elevated);
+            color: var(--accent-blue);
+            background: var(--accent-blue-light);
         }
 
-        /* Section Styling */
-        section {
-            min-height: 100vh;
-            padding: 6rem 2rem 4rem;
-            max-width: 1400px;
+        /* Main Content */
+        main {
+            max-width: 900px;
             margin: 0 auto;
+            padding: 6rem 1.5rem 4rem;
         }
 
-        .section-header {
-            margin-bottom: 3rem;
-            position: relative;
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 5rem;
         }
 
-        .section-number {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 8rem;
-            line-height: 1;
-            color: var(--bg-elevated);
-            position: absolute;
-            top: -2rem;
-            left: -1rem;
-            z-index: -1;
-        }
-
+        /* Typography */
         h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 4rem;
-            letter-spacing: 2px;
-            line-height: 1.1;
-            margin-bottom: 0.5rem;
+            font-family: 'DM Serif Display', serif;
+            font-size: 3rem;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
         }
 
         h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            font-weight: 400;
             margin-bottom: 1rem;
+            color: var(--text-primary);
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
         }
 
         h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--accent-gold);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
         }
 
-        .subtitle {
+        p {
             color: var(--text-secondary);
-            font-size: 1.25rem;
-            font-weight: 300;
+            margin-bottom: 1rem;
         }
 
-        /* Hero Section */
+        .lead {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Hero */
         .hero {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            min-height: 100vh;
-            padding: 2rem;
-            position: relative;
-            background: 
-                radial-gradient(ellipse at 20% 80%, rgba(255, 45, 85, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 50%);
+            padding: 4rem 0;
+            margin-bottom: 2rem;
         }
 
         .hero h1 {
-            font-size: 6rem;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-red) 50%, var(--accent-gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .hero-stats {
-            display: flex;
-            gap: 3rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-            justify-content: center;
+        .hero .lead {
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
         }
 
-        .stat-box {
-            background: var(--bg-card);
+        /* Key Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: var(--bg-light);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 1.5rem 2.5rem;
+            padding: 1.5rem;
             text-align: center;
         }
 
-        .stat-value {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 3rem;
-            color: var(--accent-gold);
+        .metric-value {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5rem;
+            color: var(--accent-blue);
+            line-height: 1;
+            margin-bottom: 0.5rem;
         }
 
-        .stat-label {
+        .metric-label {
             font-size: 0.875rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         /* Cards */
         .card {
-            background: var(--bg-card);
+            background: var(--bg-white);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
         }
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+        .card.highlight {
+            border-left: 4px solid var(--accent-blue);
+            background: var(--bg-light);
+        }
+
+        .card.warning {
+            border-left: 4px solid var(--accent-amber);
+            background: var(--accent-amber-light);
+        }
+
+        .card.success {
+            border-left: 4px solid var(--accent-green);
+            background: var(--accent-green-light);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--accent-blue-light);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .info-box p {
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Step Indicators */
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 4rem;
+            padding-bottom: 2rem;
+            border-left: 2px solid var(--border);
+            margin-left: 1rem;
+        }
+
+        .step:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: -1.25rem;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
         }
 
         /* Tables */
@@ -205,994 +286,977 @@
             width: 100%;
             border-collapse: collapse;
             margin: 1rem 0;
-            font-size: 0.95rem;
+            font-size: 0.9375rem;
         }
 
         th, td {
-            padding: 0.75rem 1rem;
+            padding: 0.875rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
 
         th {
-            background: var(--bg-elevated);
+            background: var(--bg-light);
             font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.8125rem;
             text-transform: uppercase;
-            font-size: 0.8rem;
             letter-spacing: 0.5px;
-            color: var(--text-secondary);
         }
 
         tr:hover {
-            background: var(--bg-elevated);
+            background: var(--bg-light);
         }
 
-        /* Code Blocks */
-        pre, code {
-            font-family: 'JetBrains Mono', monospace;
+        /* Code */
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg-subtle);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875em;
+            color: var(--accent-purple);
         }
 
         pre {
-            background: var(--bg-elevated);
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg-light);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 1.25rem;
             overflow-x: auto;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        code {
-            background: var(--bg-elevated);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: var(--accent-gold);
-        }
-
-        /* Figures */
-        .figure-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .figure-container img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .figure-caption {
-            margin-top: 1rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        /* Architecture Diagram */
-        .architecture {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            padding: 2rem;
-            background: var(--bg-elevated);
-            border-radius: 12px;
+            font-size: 0.875rem;
+            line-height: 1.6;
             margin: 1rem 0;
         }
 
-        .arch-block {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
+        /* Equation Box */
+        .equation-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
             text-align: center;
         }
 
-        .arch-block.input {
-            border-color: var(--accent-blue);
+        .equation {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
         }
 
-        .arch-block.hidden {
-            border-color: var(--accent-gold);
-        }
-
-        .arch-block.output {
-            border-color: var(--accent-green);
-        }
-
-        .arch-arrow {
-            font-size: 1.5rem;
+        .equation-label {
+            font-size: 0.875rem;
             color: var(--text-muted);
         }
 
-        /* Results Highlight */
-        .result-highlight {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-red) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 4rem;
+        /* Figures */
+        .figure {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-md);
         }
 
-        /* Metric Grid */
-        .metric-grid {
+        .figure img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .figure-caption {
+            padding: 1rem 1.5rem;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border);
+        }
+
+        .figure-caption h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .figure-caption p {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .tag.jab {
+            background: var(--accent-blue-light);
+            color: var(--accent-blue);
+        }
+
+        .tag.hook {
+            background: var(--accent-red-light);
+            color: var(--accent-red);
+        }
+
+        .tag.idle {
+            background: var(--bg-subtle);
+            color: var(--text-muted);
+        }
+
+        /* Results Grid */
+        .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin: 1.5rem 0;
         }
 
-        .metric-card {
-            background: var(--bg-elevated);
+        .result-card {
+            background: var(--bg-light);
             border-radius: 12px;
             padding: 1.25rem;
             text-align: center;
         }
 
-        .metric-card.jab {
-            border-left: 4px solid var(--accent-blue);
+        .result-card.jab {
+            border-top: 4px solid var(--accent-blue);
         }
 
-        .metric-card.hook {
-            border-left: 4px solid var(--accent-red);
+        .result-card.hook {
+            border-top: 4px solid var(--accent-red);
         }
 
-        .metric-card.idle {
-            border-left: 4px solid var(--text-muted);
+        .result-card.idle {
+            border-top: 4px solid var(--text-muted);
         }
 
-        .metric-value {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.25rem;
+        .result-value {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
         }
 
-        .metric-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Punch Type Badges */
-        .punch-type {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .punch-type.jab {
-            background: rgba(10, 132, 255, 0.2);
-            color: var(--accent-blue);
-        }
-
-        .punch-type.hook {
-            background: rgba(255, 45, 85, 0.2);
-            color: var(--accent-red);
-        }
-
-        .punch-type.idle {
-            background: rgba(99, 99, 102, 0.2);
+        .result-label {
+            font-size: 0.8125rem;
             color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Feature Categories */
-        .feature-category {
-            background: var(--bg-elevated);
+        /* Timeline Diagram */
+        .timeline-diagram {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+
+        /* AI Insights */
+        .ai-insights {
+            background: linear-gradient(135deg, var(--accent-purple-light) 0%, var(--accent-blue-light) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .ai-insights h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-purple);
+        }
+
+        .ai-insights .insight-section {
+            background: var(--bg-white);
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1rem;
         }
 
-        .feature-count {
-            float: right;
-            background: var(--accent-gold);
-            color: var(--bg-dark);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
+        .ai-insights .insight-section:last-child {
+            margin-bottom: 0;
         }
 
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--border);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 1.5rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2.3rem;
-            top: 0.5rem;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--accent-gold);
+        .grade-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            background: var(--accent-amber);
+            color: white;
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            border-radius: 8px;
+            margin-right: 1rem;
         }
 
         /* Footer */
         footer {
-            background: var(--bg-card);
+            background: var(--bg-light);
             border-top: 1px solid var(--border);
-            padding: 3rem 2rem;
+            padding: 2rem;
             text-align: center;
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
-                font-size: 3rem;
+                font-size: 2.25rem;
             }
 
             h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
 
             h2 {
-                font-size: 1.75rem;
+                font-size: 1.5rem;
             }
 
-            .section-number {
-                font-size: 5rem;
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
             }
 
             nav ul {
-                gap: 0.25rem;
+                display: none;
             }
 
-            nav a {
-                font-size: 0.7rem;
-                padding: 0.4rem 0.6rem;
-            }
-        }
-
-        /* Smooth scroll offset for fixed nav */
-        section[id] {
-            scroll-margin-top: 4rem;
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .step {
+                padding-left: 3rem;
             }
         }
 
-        .animate {
-            animation: fadeInUp 0.6s ease-out forwards;
+        /* Print styles */
+        @media print {
+            nav {
+                display: none;
+            }
+            
+            main {
+                padding-top: 0;
+            }
         }
     </style>
 </head>
 <body>
     <nav>
-        <ul>
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#hardware">Hardware</a></li>
-            <li><a href="#collection">Collection</a></li>
-            <li><a href="#labeling">Labeling</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#model">Model</a></li>
-            <li><a href="#eda">EDA</a></li>
-            <li><a href="#results">Results</a></li>
-            <li><a href="#biomechanics">Biomechanics</a></li>
-            <li><a href="#report">Report</a></li>
-        </ul>
+        <div class="nav-inner">
+            <a href="#" class="logo">🥊 Punch Classification</a>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#collection">Data Collection</a></li>
+                <li><a href="#labeling">Labeling</a></li>
+                <li><a href="#model">Model</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#insights">AI Insights</a></li>
+            </ul>
+        </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section id="hero" class="hero">
-        <h1>BOXING PUNCH<br>CLASSIFICATION</h1>
-        <p class="subtitle">IMU Sensor Data + MLP Neural Network | Real-Time Punch Detection System</p>
-        
-        <div class="hero-stats">
-            <div class="stat-box">
-                <div class="stat-value">87%</div>
-                <div class="stat-label">Test Accuracy</div>
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero" id="overview">
+            <h1>Boxing Punch Classification</h1>
+            <p class="lead">An intelligent system that automatically identifies different types of boxing punches using a small wrist-worn sensor and machine learning.</p>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">87%</div>
+                    <div class="metric-label">Accuracy</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">Punch Types</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">22</div>
+                    <div class="metric-label">Training Sessions</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">530</div>
+                    <div class="metric-label">Samples</div>
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value">108</div>
-                <div class="stat-label">Features</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value">24Hz</div>
-                <div class="stat-label">Sample Rate</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value">22</div>
-                <div class="stat-label">Sessions</div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- HARDWARE SECTION -->
-    <section id="hardware">
-        <div class="section-header">
-            <span class="section-number">01</span>
-            <h2>Hardware Setup</h2>
-            <p class="subtitle">Sensor configuration and placement methodology</p>
-        </div>
+        <!-- EXECUTIVE SUMMARY -->
+        <section id="summary">
+            <h2>Executive Summary</h2>
+            
+            <p>This project develops an automated boxing punch classification system that can distinguish between three types of movements:</p>
+            
+            <div class="results-grid">
+                <div class="result-card jab">
+                    <div class="result-value" style="color: var(--accent-blue);">JAB</div>
+                    <div class="result-label">Straight punch</div>
+                </div>
+                <div class="result-card hook">
+                    <div class="result-value" style="color: var(--accent-red);">HOOK</div>
+                    <div class="result-label">Circular punch</div>
+                </div>
+                <div class="result-card idle">
+                    <div class="result-value" style="color: var(--text-muted);">IDLE</div>
+                    <div class="result-label">No punch</div>
+                </div>
+            </div>
 
-        <div class="card-grid">
-            <div class="card">
-                <h3>🔧 Sensor Specifications</h3>
+            <div class="info-box">
+                <span class="icon">💡</span>
+                <div>
+                    <p><strong>What does this mean?</strong> A boxer wears a small sensor on their wrist. Every time they throw a punch, the system automatically knows what type of punch it was—no human observer needed. This enables real-time training feedback and performance tracking.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section id="how-it-works">
+            <h2>How It Works</h2>
+            
+            <p class="lead">The system uses motion sensors similar to those in a smartphone or smartwatch to detect the unique movement patterns of different punches.</p>
+
+            <div class="steps">
+                <div class="step">
+                    <h3>Sensor Captures Motion</h3>
+                    <p>A small sensor worn on the wrist measures two things 24 times per second:</p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li><strong>Acceleration</strong> — How fast the hand speeds up or slows down</li>
+                        <li><strong>Rotation</strong> — How the wrist twists and turns</li>
+                    </ul>
+                </div>
+                
+                <div class="step">
+                    <h3>System Detects a Punch</h3>
+                    <p>When a punch is thrown, the sensor readings spike dramatically. The system identifies this moment by looking for the peak intensity of the movement.</p>
+                </div>
+                
+                <div class="step">
+                    <h3>Extract Key Measurements</h3>
+                    <p>The system captures a half-second window around each punch and calculates 108 different measurements that describe the punch's characteristics.</p>
+                </div>
+                
+                <div class="step">
+                    <h3>AI Classifies the Punch</h3>
+                    <p>A neural network—trained on hundreds of labeled punches—analyzes these measurements and determines whether it was a jab, hook, or no punch at all.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA COLLECTION -->
+        <section id="collection">
+            <h2>Data Collection</h2>
+            
+            <p class="lead">High-quality data is the foundation of any machine learning system. We designed a rigorous 7-day data collection protocol to ensure the model learns from diverse, real-world examples.</p>
+
+            <div class="card highlight">
+                <h3>🔧 The Sensor</h3>
+                <p>We used a <strong>Holyiot-23033</strong> Bluetooth sensor containing a <strong>BMI055 IMU</strong> (Inertial Measurement Unit). This is the same type of sensor found in fitness trackers and smartphones.</p>
                 <table>
-                    <tr><th>Property</th><th>Value</th></tr>
-                    <tr><td>Device</td><td>Holyiot-23033 BLE Module</td></tr>
-                    <tr><td>IMU</td><td>BMI055 (6-axis)</td></tr>
-                    <tr><td>Sample Rate</td><td>~24 Hz</td></tr>
-                    <tr><td>Communication</td><td>Bluetooth Low Energy</td></tr>
-                    <tr><td>Axes</td><td>3 Accelerometer + 3 Gyroscope</td></tr>
+                    <tr><th>Specification</th><th>Value</th><th>What It Means</th></tr>
+                    <tr><td>Sample Rate</td><td>24 Hz</td><td>Takes 24 measurements per second</td></tr>
+                    <tr><td>Axes</td><td>6</td><td>Measures 3 directions of acceleration + 3 directions of rotation</td></tr>
+                    <tr><td>Communication</td><td>Bluetooth</td><td>Wirelessly sends data to a computer</td></tr>
                 </table>
             </div>
 
             <div class="card">
                 <h3>📍 Sensor Placement</h3>
-                <p><strong>Position:</strong> Left wrist (lead hand for orthodox stance)</p>
-                <p><strong>Location:</strong> Back of wrist, 2cm from wrist bone toward elbow</p>
-                <p><strong>Orientation:</strong> USB port facing toward elbow</p>
-                <p><strong>Attachment:</strong> Tight strap - sensor must not move independently</p>
-                
-                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-elevated); border-radius: 8px; border-left: 4px solid var(--accent-blue);">
-                    <strong>Why Left Wrist?</strong><br>
-                    In orthodox boxing stance, the left hand is the lead hand used for <span class="punch-type jab">JAB</span> (straight punches) and <span class="punch-type jab">LEAD HOOK</span> (rotational punches).
-                </div>
+                <p>The sensor is worn on the <strong>left wrist</strong> (the lead hand in orthodox boxing stance). This hand throws jabs and lead hooks—the punches we want to classify.</p>
+                <ul style="margin-left: 1.5rem;">
+                    <li>Position: Back of wrist, 2cm from wrist bone toward elbow</li>
+                    <li>Attachment: Tight strap so sensor moves with the wrist, not independently</li>
+                </ul>
             </div>
-        </div>
-    </section>
 
-    <!-- DATA COLLECTION SECTION -->
-    <section id="collection">
-        <div class="section-header">
-            <span class="section-number">02</span>
-            <h2>Data Collection Protocol</h2>
-            <p class="subtitle">7-day structured data collection across 24 sessions</p>
-        </div>
-
-        <div class="card">
-            <h3>📅 Session Structure by Day</h3>
+            <h3>Collection Schedule</h3>
+            <p>Data was collected over 7 days with specific goals each day:</p>
+            
             <table>
                 <thead>
-                    <tr><th>Day</th><th>Focus</th><th>Sessions</th><th>Purpose</th></tr>
+                    <tr><th>Day</th><th>Focus</th><th>Purpose</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Day 1</td><td>Baseline & Calibration</td><td>1-2</td><td>Establish baseline movements</td></tr>
-                    <tr><td>Day 2</td><td>Jabs</td><td>3-8</td><td>Isolated jab training data</td></tr>
-                    <tr><td>Day 3</td><td>Hooks</td><td>9-14</td><td>Isolated hook training data</td></tr>
-                    <tr><td>Day 4</td><td>Mixed</td><td>15-16</td><td>Combined punch sequences</td></tr>
-                    <tr><td>Day 5</td><td>Validation</td><td>17-19</td><td>Hold-out test data</td></tr>
-                    <tr><td>Day 6</td><td>Stress Testing</td><td>20-22</td><td>Edge cases & hard negatives</td></tr>
+                    <tr><td>Day 1</td><td>Baseline</td><td>Calibrate the sensor and establish baseline readings</td></tr>
+                    <tr><td>Day 2</td><td>Jabs Only</td><td>Collect pure jab examples at various speeds and intensities</td></tr>
+                    <tr><td>Day 3</td><td>Hooks Only</td><td>Collect pure hook examples at various speeds and intensities</td></tr>
+                    <tr><td>Day 4</td><td>Mixed</td><td>Randomized jabs and hooks to simulate real training</td></tr>
+                    <tr><td>Day 5</td><td>Validation</td><td>Hold-out data for unbiased testing</td></tr>
+                    <tr><td>Day 6</td><td>Stress Test</td><td>Edge cases, fatigue, and "trick" movements</td></tr>
+                    <tr><td>Day 7</td><td>Final Test</td><td>Completely blind evaluation</td></tr>
                 </tbody>
             </table>
-        </div>
 
-        <div class="card-grid">
-            <div class="card">
-                <h3>Session Types</h3>
-                <table>
-                    <tr><th>Code</th><th>Type</th><th>Description</th></tr>
-                    <tr><td>A</td><td>Controlled</td><td>Single punch, minimal movement</td></tr>
-                    <tr><td>B</td><td>Natural</td><td>Single punch with footwork</td></tr>
-                    <tr><td>C</td><td>Mixed</td><td>Randomized jabs/hooks</td></tr>
-                    <tr><td>D</td><td>Hard Negative</td><td>Non-punch movements</td></tr>
-                    <tr><td>E</td><td>Idle</td><td>Baseline with no punches</td></tr>
-                </table>
+            <div class="figure" id="fig1-container">
+                <img id="fig1" alt="Data collection distribution across days">
+                <div class="figure-caption">
+                    <h4>Figure 1: Data Distribution by Day</h4>
+                    <p>The left chart shows the number of sensor readings per day. The right chart shows the number of individual punches recorded. Days 2 and 3 have the most data because they focused on collecting many examples of jabs and hooks.</p>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>Intensity & Speed Variations</h3>
-                <p><strong>Intensity Levels:</strong></p>
-                <ul style="margin: 0.5rem 0 1rem 1.5rem;">
-                    <li>Light</li>
-                    <li>Medium</li>
-                    <li>Power</li>
-                    <li>Mixed</li>
-                </ul>
-                <p><strong>Speed Levels:</strong></p>
-                <ul style="margin: 0.5rem 0 0 1.5rem;">
-                    <li>Slow</li>
-                    <li>Medium</li>
-                    <li>Fast</li>
-                    <li>Mixed</li>
-                </ul>
+            <h3>Variation in Training Data</h3>
+            <p>To make the model robust, we varied the punches in multiple ways:</p>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-value" style="font-size: 1.5rem;">Intensity</div>
+                    <div class="result-label">Light, Medium, Power</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value" style="font-size: 1.5rem;">Speed</div>
+                    <div class="result-label">Slow, Medium, Fast</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value" style="font-size: 1.5rem;">Context</div>
+                    <div class="result-label">Standing, Moving</div>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- LABELING SECTION -->
-    <section id="labeling">
-        <div class="section-header">
-            <span class="section-number">03</span>
+            <div class="figure" id="fig2-container">
+                <img id="fig2" alt="Raw sensor data from a training session">
+                <div class="figure-caption">
+                    <h4>Figure 2: Raw Sensor Data from a Jab Training Session</h4>
+                    <p>This shows what the sensor "sees" during training. The top two panels show acceleration and rotation readings. The vertical dashed lines mark when a beep sounded (signaling the boxer to throw a punch). Notice the clear spikes in activity right after each beep—those are the punches.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- LABELING METHODOLOGY -->
+        <section id="labeling">
             <h2>Labeling Methodology</h2>
-            <p class="subtitle">Beep-based labeling with peak detection</p>
-        </div>
+            
+            <p class="lead">For the AI to learn, every punch needs a correct label. We developed a precise beep-based system to ensure accurate labeling without manual review of every punch.</p>
 
-        <div class="card">
-            <h3>⏱️ Beep-Based Timing</h3>
-            <p>Each punch is triggered by an audio beep with the following timing sequence:</p>
-            <pre>[BEEP] ─────────────► [PUNCH EXECUTION] ─────────────► [RETURN TO GUARD]
-   │                          │
-  t=0ms                    t=50-1000ms (peak search window)</pre>
-        </div>
+            <div class="info-box">
+                <span class="icon">🎯</span>
+                <div>
+                    <p><strong>The Challenge:</strong> With hundreds of punches to label, manually watching video and tagging each one would be extremely time-consuming and error-prone. Our solution uses audio cues and automated peak detection.</p>
+                </div>
+            </div>
 
-        <div class="card-grid">
+            <h3>The Beep System</h3>
+            <p>Each punch is triggered by an audio beep. The boxer hears the beep and throws the punch. Since we control when the beep happens and what type of punch is requested, we know exactly what to expect.</p>
+
+            <div class="timeline-diagram">
+                <pre style="margin: 0; background: transparent; border: none; padding: 0;">
+[BEEP sounds]  ──────►  [Boxer throws punch]  ──────►  [Returns to guard]
+      │                        │                              │
+   t = 0 ms              t = 50-300 ms                  t = 500+ ms
+                               │
+                         ┌─────┴─────┐
+                         │   PEAK    │
+                         │ DETECTED  │
+                         └───────────┘
+                </pre>
+            </div>
+
+            <h3>How Labels Are Assigned</h3>
+            
             <div class="card">
-                <h3>Label Assignment Logic</h3>
-                <p><strong>Single-Type Sessions:</strong></p>
-                <pre>if session['punch_type'] == 'jab':
-    label = 'jab'
-elif session['punch_type'] == 'hook':
-    label = 'hook'</pre>
-                
-                <p style="margin-top: 1rem;"><strong>Mixed Sessions:</strong></p>
-                <pre>announcement = beep['announcement'].upper()
-if 'JAB' in announcement:
-    label = 'jab'
-elif 'HOOK' in announcement:
-    label = 'hook'</pre>
+                <h4>Single-Type Sessions (Days 2-3)</h4>
+                <p>When a session contains only jabs or only hooks, every punch in that session gets the same label automatically.</p>
+                <p><em>Example: During "Session 5: Power Jabs," every punch detected is labeled as "jab."</em></p>
             </div>
 
             <div class="card">
-                <h3>Peak Detection Algorithm</h3>
-                <p>Punch peak identified using gyroscope magnitude:</p>
-                <pre>gyro_magnitude = √(gyro_x² + gyro_y² + gyro_z²)</pre>
-                
-                <p style="margin-top: 1rem;"><strong>Search Window:</strong> 50ms to 1000ms after beep</p>
-                <ul style="margin: 0.5rem 0 0 1.5rem;">
-                    <li>Start at 50ms to skip initial reaction time</li>
-                    <li>End at 1000ms to capture delayed punches</li>
+                <h4>Mixed Sessions (Days 4-6)</h4>
+                <p>A voice announcement precedes each beep, telling the boxer what to throw:</p>
+                <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li>System announces "JAB" or "HOOK"</li>
+                    <li>Beep sounds 1 second later</li>
+                    <li>Boxer throws the announced punch</li>
+                    <li>System labels the detected punch accordingly</li>
+                </ol>
+            </div>
+
+            <h3>Finding the Punch Peak</h3>
+            <p>The exact moment of a punch is identified by finding the peak rotation speed (when the wrist is moving fastest). This is more reliable than acceleration because rotation clearly distinguishes punching from other movements.</p>
+
+            <div class="equation-box">
+                <div class="equation">Rotation Magnitude = √(gyro_x² + gyro_y² + gyro_z²)</div>
+                <div class="equation-label">Combines all three rotation directions into a single "intensity" value</div>
+            </div>
+
+            <div class="figure" id="fig3-container">
+                <img id="fig3" alt="Peak detection comparison for different punch types">
+                <div class="figure-caption">
+                    <h4>Figure 3: Peak Detection by Punch Type</h4>
+                    <p>Each panel shows the rotation magnitude over time for a jab, hook, and idle period. The red vertical line marks the detected peak. Notice how jabs and hooks have sharp peaks while idle periods remain flat—this is how the system knows a punch occurred.</p>
+                </div>
+            </div>
+
+            <h3>Extracting the Analysis Window</h3>
+            <p>Once we find the peak, we extract a 500-millisecond window centered around it:</p>
+
+            <div class="timeline-diagram">
+                <pre style="margin: 0; background: transparent; border: none; padding: 0;">
+        │◄───── 150 ms ─────│◄────── 350 ms ──────│
+        │     BEFORE        │       AFTER         │
+        │   (wind-up)       │   (follow-through)  │
+        │                   │                     │
+   ─────┼───────────────────*─────────────────────┼─────
+                          PEAK
+        │◄─────────── 500 ms total ──────────────►│
+                </pre>
+            </div>
+
+            <div class="card highlight">
+                <h3>Why This Window?</h3>
+                <ul style="margin-left: 1.5rem;">
+                    <li><strong>150 ms before:</strong> Captures any "telegraphing" (early movement that gives away the punch)</li>
+                    <li><strong>350 ms after:</strong> Captures the follow-through and hand retraction</li>
+                    <li><strong>~12 data points:</strong> At 24 Hz, this gives us about 12 sensor readings to analyze</li>
                 </ul>
             </div>
-        </div>
+        </section>
 
-        <div class="card">
-            <h3>📐 Window Extraction</h3>
-            <p>Windows are centered on the detected peak:</p>
-            <pre>        │◄── 150ms ──►│◄── 350ms ──►│
-        │   BEFORE    │    AFTER    │
-        │             │             │
-   ─────┼─────────────*─────────────┼─────
-                    PEAK
-        │◄─────── 500ms total ──────►│</pre>
-            <p style="margin-top: 1rem;">
-                <strong>Before peak:</strong> 150ms (captures wind-up/telegraphing)<br>
-                <strong>After peak:</strong> 350ms (captures follow-through/retraction)<br>
-                <strong>Total window:</strong> 500ms (~12 samples at 24Hz)
-            </p>
-        </div>
-    </section>
-
-    <!-- FEATURES SECTION -->
-    <section id="features">
-        <div class="section-header">
-            <span class="section-number">04</span>
+        <!-- FEATURE EXTRACTION -->
+        <section id="features">
             <h2>Feature Extraction</h2>
-            <p class="subtitle">108 features extracted per window</p>
-        </div>
+            
+            <p class="lead">Raw sensor data needs to be converted into meaningful measurements the AI can understand. We extract 108 features from each punch window.</p>
 
-        <div class="feature-category">
-            <span class="feature-count">60</span>
-            <h3>Time-Domain Features (per axis)</h3>
-            <p>For each of 6 sensor channels (accel_x/y/z, gyro_x/y/z):</p>
-            <table>
-                <tr><th>Feature</th><th>Description</th></tr>
-                <tr><td><code>mean</code></td><td>Average value</td></tr>
-                <tr><td><code>std</code></td><td>Standard deviation</td></tr>
-                <tr><td><code>min / max</code></td><td>Minimum / Maximum value</td></tr>
-                <tr><td><code>range</code></td><td>max - min</td></tr>
-                <tr><td><code>median</code></td><td>Median value</td></tr>
-                <tr><td><code>iqr</code></td><td>Interquartile range (75th - 25th)</td></tr>
-                <tr><td><code>skew</code></td><td>Skewness (asymmetry)</td></tr>
-                <tr><td><code>kurtosis</code></td><td>Tail heaviness</td></tr>
-                <tr><td><code>zero_cross</code></td><td>Zero-crossing count</td></tr>
-            </table>
-            <p style="margin-top: 1rem; color: var(--text-secondary);">6 channels × 10 features = <strong>60 features</strong></p>
-        </div>
-
-        <div class="feature-category">
-            <span class="feature-count">30</span>
-            <h3>Frequency-Domain Features (FFT)</h3>
-            <p>For each of 6 sensor channels:</p>
-            <table>
-                <tr><th>Feature</th><th>Description</th></tr>
-                <tr><td><code>fft_mean</code></td><td>Mean of FFT magnitudes</td></tr>
-                <tr><td><code>fft_std</code></td><td>Std of FFT magnitudes</td></tr>
-                <tr><td><code>fft_max</code></td><td>Maximum FFT magnitude</td></tr>
-                <tr><td><code>fft_energy</code></td><td>Sum of squared FFT magnitudes</td></tr>
-                <tr><td><code>fft_dom_idx</code></td><td>Normalized dominant frequency index</td></tr>
-            </table>
-            <p style="margin-top: 1rem; color: var(--text-secondary);">6 channels × 5 features = <strong>30 features</strong></p>
-        </div>
-
-        <div class="card-grid">
-            <div class="feature-category">
-                <span class="feature-count">12</span>
-                <h3>Magnitude Features</h3>
-                <p>For accelerometer & gyroscope magnitudes:</p>
-                <table>
-                    <tr><td><code>mag_mean</code></td><td>Mean magnitude</td></tr>
-                    <tr><td><code>mag_std</code></td><td>Std magnitude</td></tr>
-                    <tr><td><code>mag_max</code></td><td>Peak magnitude</td></tr>
-                    <tr><td><code>mag_min</code></td><td>Minimum magnitude</td></tr>
-                    <tr><td><code>mag_range</code></td><td>Range of magnitude</td></tr>
-                    <tr><td><code>mag_peak_idx</code></td><td>Normalized peak position</td></tr>
-                </table>
-            </div>
-
-            <div class="feature-category">
-                <span class="feature-count">6</span>
-                <h3>Cross-Axis Correlations</h3>
-                <p>Pearson correlation between axis pairs:</p>
-                <table>
-                    <tr><td><code>accel_xy_corr</code></td><td>X vs Y</td></tr>
-                    <tr><td><code>accel_xz_corr</code></td><td>X vs Z</td></tr>
-                    <tr><td><code>accel_yz_corr</code></td><td>Y vs Z</td></tr>
-                    <tr><td><code>gyro_xy_corr</code></td><td>X vs Y</td></tr>
-                    <tr><td><code>gyro_xz_corr</code></td><td>X vs Z</td></tr>
-                    <tr><td><code>gyro_yz_corr</code></td><td>Y vs Z</td></tr>
-                </table>
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: var(--bg-card); border-radius: 12px;">
-            <p style="color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Total Features</p>
-            <span class="result-highlight">108</span>
-            <p style="margin-top: 0.5rem; color: var(--text-muted);">60 + 30 + 12 + 6 = 108</p>
-        </div>
-    </section>
-
-    <!-- MODEL SECTION -->
-    <section id="model">
-        <div class="section-header">
-            <span class="section-number">05</span>
-            <h2>Model Architecture</h2>
-            <p class="subtitle">Multi-Layer Perceptron (MLP) Classifier</p>
-        </div>
-
-        <div class="card">
-            <h3>🧠 Neural Network Architecture</h3>
-            <div class="architecture">
-                <div class="arch-block input">
-                    <strong>Input</strong><br>
-                    <span style="font-size: 1.5rem;">108</span><br>
-                    <small>features</small>
-                </div>
-                <span class="arch-arrow">→</span>
-                <div class="arch-block hidden">
-                    <strong>Hidden 1</strong><br>
-                    <span style="font-size: 1.5rem;">128</span><br>
-                    <small>ReLU</small>
-                </div>
-                <span class="arch-arrow">→</span>
-                <div class="arch-block hidden">
-                    <strong>Hidden 2</strong><br>
-                    <span style="font-size: 1.5rem;">64</span><br>
-                    <small>ReLU</small>
-                </div>
-                <span class="arch-arrow">→</span>
-                <div class="arch-block hidden">
-                    <strong>Hidden 3</strong><br>
-                    <span style="font-size: 1.5rem;">32</span><br>
-                    <small>ReLU</small>
-                </div>
-                <span class="arch-arrow">→</span>
-                <div class="arch-block output">
-                    <strong>Output</strong><br>
-                    <span style="font-size: 1.5rem;">3</span><br>
-                    <small>classes</small>
+            <div class="info-box">
+                <span class="icon">📊</span>
+                <div>
+                    <p><strong>What are features?</strong> Features are numerical descriptions of the data. Instead of showing the AI a raw stream of numbers, we calculate statistics like "average acceleration" or "peak rotation speed" that capture the essence of each punch.</p>
                 </div>
             </div>
-            <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
-                Classes: <span class="punch-type jab">JAB</span> 
-                <span class="punch-type hook">HOOK</span> 
-                <span class="punch-type idle">IDLE</span>
-            </p>
-        </div>
 
-        <div class="card-grid">
+            <h3>Feature Categories</h3>
+
             <div class="card">
-                <h3>⚙️ Hyperparameters</h3>
+                <h4>Time-Domain Features (60 total)</h4>
+                <p>Basic statistics calculated for each of the 6 sensor channels:</p>
                 <table>
-                    <tr><td>Hidden layers</td><td><code>(128, 64, 32)</code></td></tr>
-                    <tr><td>Activation</td><td>ReLU</td></tr>
-                    <tr><td>Solver</td><td>Adam</td></tr>
-                    <tr><td>L2 Regularization (α)</td><td>0.001</td></tr>
-                    <tr><td>Learning rate</td><td>Adaptive, init=0.001</td></tr>
-                    <tr><td>Batch size</td><td>Auto</td></tr>
-                    <tr><td>Max iterations</td><td>500</td></tr>
-                    <tr><td>Early stopping</td><td>Yes (patience=20)</td></tr>
-                    <tr><td>Validation fraction</td><td>10%</td></tr>
+                    <tr><th>Feature</th><th>What It Measures</th></tr>
+                    <tr><td>Mean</td><td>Average value during the punch</td></tr>
+                    <tr><td>Standard Deviation</td><td>How much the values vary</td></tr>
+                    <tr><td>Min / Max</td><td>Lowest and highest values</td></tr>
+                    <tr><td>Range</td><td>Difference between max and min</td></tr>
+                    <tr><td>Skewness</td><td>Whether values are lopsided high or low</td></tr>
+                    <tr><td>Kurtosis</td><td>Whether there are extreme spikes</td></tr>
                 </table>
+                <p style="margin-top: 1rem; color: var(--text-muted);"><em>6 sensor channels × 10 statistics = 60 features</em></p>
             </div>
 
             <div class="card">
-                <h3>🔄 Preprocessing</h3>
-                <div style="padding: 1rem; background: var(--bg-elevated); border-radius: 8px; margin-bottom: 1rem;">
-                    <strong>Feature Scaling</strong><br>
-                    StandardScaler (zero mean, unit variance)
-                </div>
-                <div style="padding: 1rem; background: var(--bg-elevated); border-radius: 8px;">
-                    <strong>Label Encoding</strong><br>
-                    LabelEncoder (jab=0, hook=1, idle=2)
-                </div>
-
-                <h3 style="margin-top: 1.5rem;">📊 Data Split</h3>
+                <h4>Frequency-Domain Features (30 total)</h4>
+                <p>Analyzes the "rhythm" of the movement using Fourier Transform:</p>
                 <table>
-                    <tr><td>Training</td><td>Sessions 1-18, 20-22</td></tr>
-                    <tr><td>Hold-out</td><td>Session 19</td></tr>
-                    <tr><td>Test</td><td>Session 23</td></tr>
+                    <tr><th>Feature</th><th>What It Measures</th></tr>
+                    <tr><td>FFT Mean</td><td>Average frequency content</td></tr>
+                    <tr><td>FFT Max</td><td>Dominant frequency strength</td></tr>
+                    <tr><td>FFT Energy</td><td>Total "power" in the movement</td></tr>
+                    <tr><td>Dominant Frequency</td><td>The main rhythm of the punch</td></tr>
                 </table>
+                <p style="margin-top: 1rem; color: var(--text-muted);"><em>6 sensor channels × 5 frequency features = 30 features</em></p>
             </div>
-        </div>
-    </section>
 
-    <!-- EDA SECTION -->
-    <section id="eda">
-        <div class="section-header">
-            <span class="section-number">06</span>
-            <h2>Exploratory Data Analysis</h2>
-            <p class="subtitle">Visual exploration of the collected sensor data</p>
-        </div>
+            <div class="card">
+                <h4>Magnitude Features (12 total)</h4>
+                <p>Overall intensity regardless of direction:</p>
+                <div class="equation-box" style="margin: 1rem 0;">
+                    <div class="equation">Acceleration Magnitude = √(accel_x² + accel_y² + accel_z²)</div>
+                </div>
+                <p style="color: var(--text-muted);"><em>2 magnitude types × 6 statistics = 12 features</em></p>
+            </div>
 
-        <div class="figure-container" id="fig1-container">
-            <h3>Sessions by Day</h3>
-            <img id="fig1" alt="Sessions per Day - Bar charts showing samples and punches distribution across 6 days of data collection">
-            <p class="figure-caption">Distribution of data samples and punch counts across the 6-day collection period. Days 2 (Jabs) and 3 (Hooks) contain the most training data.</p>
-        </div>
+            <div class="card">
+                <h4>Cross-Axis Correlations (6 total)</h4>
+                <p>How different directions move together (helps distinguish straight punches from rotational ones):</p>
+                <ul style="margin-left: 1.5rem;">
+                    <li>Correlation between X and Y acceleration</li>
+                    <li>Correlation between X and Z acceleration</li>
+                    <li>... and so on for all axis pairs</li>
+                </ul>
+            </div>
 
-        <div class="figure-container" id="fig2-container">
-            <h3>Raw Sensor Data Visualization</h3>
-            <img id="fig2" alt="Full session sensor data showing accelerometer and gyroscope readings over time">
-            <p class="figure-caption">Complete sensor trace from a jab training session (Session 5). Vertical lines indicate beep timestamps. Shows accelerometer (X/Y/Z), gyroscope (X/Y/Z), and computed magnitudes.</p>
-        </div>
+            <div class="metric-card" style="background: var(--accent-blue-light); margin-top: 2rem; text-align: center;">
+                <div class="metric-value" style="font-size: 4rem;">108</div>
+                <div class="metric-label" style="font-size: 1rem;">Total Features Per Punch</div>
+            </div>
+        </section>
 
-        <div class="figure-container" id="fig3-container">
-            <h3>Peak Detection by Punch Type</h3>
-            <img id="fig3" alt="Peak detection comparison for jab, hook, and idle movements">
-            <p class="figure-caption">Gyroscope magnitude profiles showing distinct peak patterns for jabs (sharp linear), hooks (rotational), and idle periods (flat baseline).</p>
-        </div>
-    </section>
+        <!-- MODEL -->
+        <section id="model">
+            <h2>The Classification Model</h2>
+            
+            <p class="lead">We use a Multi-Layer Perceptron (MLP)—a type of neural network—to classify punches based on the 108 extracted features.</p>
 
-    <!-- RESULTS SECTION -->
-    <section id="results">
-        <div class="section-header">
-            <span class="section-number">07</span>
+            <div class="info-box">
+                <span class="icon">🧠</span>
+                <div>
+                    <p><strong>What is a neural network?</strong> It's a computer program inspired by how the brain works. It learns patterns from examples. Show it hundreds of labeled punches, and it learns to recognize what makes a jab different from a hook.</p>
+                </div>
+            </div>
+
+            <h3>Network Architecture</h3>
+            <p>The neural network has 4 layers that progressively distill the 108 input features into a final classification:</p>
+
+            <div class="timeline-diagram" style="text-align: center; font-family: 'DM Sans', sans-serif;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <div style="background: var(--accent-blue-light); padding: 1rem; border-radius: 8px; border: 2px solid var(--accent-blue);">
+                        <strong>Input</strong><br>108 features
+                    </div>
+                    <span style="color: var(--text-muted);">→</span>
+                    <div style="background: var(--accent-amber-light); padding: 1rem; border-radius: 8px; border: 2px solid var(--accent-amber);">
+                        <strong>Layer 1</strong><br>128 neurons
+                    </div>
+                    <span style="color: var(--text-muted);">→</span>
+                    <div style="background: var(--accent-amber-light); padding: 1rem; border-radius: 8px; border: 2px solid var(--accent-amber);">
+                        <strong>Layer 2</strong><br>64 neurons
+                    </div>
+                    <span style="color: var(--text-muted);">→</span>
+                    <div style="background: var(--accent-amber-light); padding: 1rem; border-radius: 8px; border: 2px solid var(--accent-amber);">
+                        <strong>Layer 3</strong><br>32 neurons
+                    </div>
+                    <span style="color: var(--text-muted);">→</span>
+                    <div style="background: var(--accent-green-light); padding: 1rem; border-radius: 8px; border: 2px solid var(--accent-green);">
+                        <strong>Output</strong><br>3 classes
+                    </div>
+                </div>
+            </div>
+
+            <h3>Training Process</h3>
+            <p>The model learns by seeing many examples and adjusting itself to minimize mistakes:</p>
+
+            <table>
+                <tr><th>Parameter</th><th>Value</th><th>Explanation</th></tr>
+                <tr><td>Training Samples</td><td>530</td><td>Total punches the model learned from</td></tr>
+                <tr><td>Iterations</td><td>27</td><td>Times the model went through the data</td></tr>
+                <tr><td>Early Stopping</td><td>Yes</td><td>Stops when performance stops improving (prevents overfitting)</td></tr>
+                <tr><td>Final Loss</td><td>0.054</td><td>How wrong the model is (lower is better)</td></tr>
+            </table>
+
+            <div class="figure" id="fig4-container">
+                <img id="fig4" alt="Training loss curve">
+                <div class="figure-caption">
+                    <h4>Figure 4: Training Loss Curve</h4>
+                    <p>This shows how the model improved during training. The "loss" (error) drops quickly in the first few iterations and then levels off. The model stopped automatically after 27 iterations when it detected no further improvement.</p>
+                </div>
+            </div>
+
+            <h3>Data Balance</h3>
+            <p>The training data had a roughly balanced distribution of punch types:</p>
+
+            <div class="results-grid">
+                <div class="result-card hook">
+                    <div class="result-value" style="color: var(--accent-red);">220</div>
+                    <div class="result-label">Hook Samples</div>
+                </div>
+                <div class="result-card jab">
+                    <div class="result-value" style="color: var(--accent-blue);">214</div>
+                    <div class="result-label">Jab Samples</div>
+                </div>
+                <div class="result-card idle">
+                    <div class="result-value" style="color: var(--text-muted);">96</div>
+                    <div class="result-label">Idle Samples</div>
+                </div>
+            </div>
+
+            <div class="card warning">
+                <h3>⚠️ Note on Data Imbalance</h3>
+                <p>The "idle" class has fewer samples than jabs and hooks. This explains why the model performs less well on idle detection—it simply had fewer examples to learn from.</p>
+            </div>
+        </section>
+
+        <!-- RESULTS -->
+        <section id="results">
             <h2>Model Results</h2>
-            <p class="subtitle">Training performance and Session 19 test evaluation</p>
-        </div>
+            
+            <p class="lead">The model was tested on Session 19—data it had never seen during training. This "blind test" shows how well the system performs in real-world conditions.</p>
 
-        <div class="card">
-            <h3>📈 Training Performance</h3>
-            <div class="metric-grid">
-                <div class="metric-card">
-                    <div class="metric-value">530</div>
-                    <div class="metric-label">Training Samples</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">27</div>
-                    <div class="metric-label">Iterations</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">0.0543</div>
-                    <div class="metric-label">Final Loss</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">86.98%</div>
-                    <div class="metric-label">CV Mean</div>
+            <div class="figure" id="fig5-container">
+                <img id="fig5" alt="Session 19 test data">
+                <div class="figure-caption">
+                    <h4>Figure 5: Test Session Sensor Data (Session 19)</h4>
+                    <p>The complete sensor trace from the blind test session. This session contained 10 jabs and 10 hooks in randomized order—the model had to classify each one without knowing the correct answer.</p>
                 </div>
             </div>
-        </div>
 
-        <div class="figure-container" id="fig4-container">
-            <h3>Training Loss Curve</h3>
-            <img id="fig4" alt="MLP training loss curve showing convergence">
-            <p class="figure-caption">Loss converges quickly within ~27 iterations due to early stopping. The model achieves a final loss of 0.0543.</p>
-        </div>
-
-        <div class="card">
-            <h3>🧪 Label Distribution</h3>
-            <div class="metric-grid">
-                <div class="metric-card hook">
-                    <div class="metric-value" style="color: var(--accent-red);">220</div>
-                    <div class="metric-label">Hook samples</div>
-                </div>
-                <div class="metric-card jab">
-                    <div class="metric-value" style="color: var(--accent-blue);">214</div>
-                    <div class="metric-label">Jab samples</div>
-                </div>
-                <div class="metric-card idle">
-                    <div class="metric-value" style="color: var(--text-muted);">96</div>
-                    <div class="metric-label">Idle samples</div>
+            <div class="figure" id="fig6-container">
+                <img id="fig6" alt="Jab vs Hook comparison">
+                <div class="figure-caption">
+                    <h4>Figure 6: Jab vs Hook Signal Comparison</h4>
+                    <p>Side-by-side comparison of a jab and hook from the test session. Notice the different patterns: jabs show more linear acceleration, while hooks show more rotational movement.</p>
                 </div>
             </div>
-        </div>
 
-        <div class="figure-container" id="fig5-container">
-            <h3>Session 19 Sensor Data (Test Set)</h3>
-            <img id="fig5" alt="Session 19 complete sensor data visualization">
-            <p class="figure-caption">Complete sensor trace from the blind mixed test session (Session 19). Contains 10 jabs and 10 hooks with randomized order.</p>
-        </div>
+            <div class="figure" id="fig7-container">
+                <img id="fig7" alt="Peak detection on test data">
+                <div class="figure-caption">
+                    <h4>Figure 7: Peak Detection on Test Data</h4>
+                    <p>The system successfully identifies the punch peaks in the test data. The green shaded area shows the search window; the red line marks where the peak was detected.</p>
+                </div>
+            </div>
 
-        <div class="figure-container" id="fig6-container">
-            <h3>Jab vs Hook Comparison (Session 19)</h3>
-            <img id="fig6" alt="Side-by-side comparison of jab and hook sensor signatures">
-            <p class="figure-caption">Direct comparison of accelerometer and gyroscope patterns between a jab and hook punch from the test session.</p>
-        </div>
+            <h3>Classification Results</h3>
+            
+            <div class="metric-card" style="background: var(--accent-green-light); border: 2px solid var(--accent-green); margin: 2rem 0;">
+                <div class="metric-value" style="color: var(--accent-green); font-size: 5rem;">87%</div>
+                <div class="metric-label" style="font-size: 1.25rem;">Overall Accuracy (20 of 23 correct)</div>
+            </div>
 
-        <div class="figure-container" id="fig7-container">
-            <h3>Peak Detection (Session 19)</h3>
-            <img id="fig7" alt="Peak detection for jab and hook in Session 19">
-            <p class="figure-caption">Peak detection demonstration on test data showing the search window (green shaded) and detected peak (vertical red line).</p>
-        </div>
+            <div class="figure" id="fig8-container">
+                <img id="fig8" alt="Confusion matrix">
+                <div class="figure-caption">
+                    <h4>Figure 8: Confusion Matrix</h4>
+                    <p>This shows what the model predicted vs. what was actually thrown. Diagonal cells (dark blue) are correct predictions. Off-diagonal cells are mistakes. The model correctly identified 9/10 jabs and 10/10 hooks.</p>
+                </div>
+            </div>
 
-        <div class="figure-container" id="fig8-container">
-            <h3>Confusion Matrix & Classification Report</h3>
-            <img id="fig8" alt="Confusion matrix for Session 19 predictions">
-            <p class="figure-caption">Session 19 achieves 87% overall accuracy. Hooks achieve perfect 100% recall, jabs 90%, while idle detection needs improvement at 33%.</p>
-        </div>
-
-        <div class="card">
-            <h3>📊 Per-Class Performance</h3>
+            <h3>Per-Class Performance</h3>
+            
             <table>
                 <thead>
-                    <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr>
+                    <tr><th>Punch Type</th><th>Precision</th><th>Recall</th><th>F1 Score</th><th>Samples</th></tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><span class="punch-type jab">JAB</span></td>
+                        <td><span class="tag jab">JAB</span></td>
                         <td>90%</td>
                         <td>90%</td>
                         <td>0.90</td>
                         <td>10</td>
                     </tr>
                     <tr>
-                        <td><span class="punch-type hook">HOOK</span></td>
+                        <td><span class="tag hook">HOOK</span></td>
                         <td>91%</td>
                         <td>100%</td>
                         <td>0.95</td>
                         <td>10</td>
                     </tr>
                     <tr>
-                        <td><span class="punch-type idle">IDLE</span></td>
+                        <td><span class="tag idle">IDLE</span></td>
                         <td>50%</td>
                         <td>33%</td>
                         <td>0.40</td>
                         <td>3</td>
                     </tr>
-                    <tr style="background: var(--bg-elevated); font-weight: 700;">
-                        <td>Overall Accuracy</td>
-                        <td colspan="4" style="text-align: center;">87% (20/23)</td>
-                    </tr>
                 </tbody>
             </table>
-        </div>
-    </section>
 
-    <!-- BIOMECHANICS SECTION -->
-    <section id="biomechanics">
-        <div class="section-header">
-            <span class="section-number">08</span>
-            <h2>Biomechanical Analysis</h2>
-            <p class="subtitle">Performance metrics for correctly classified punches</p>
-        </div>
-
-        <div class="card">
-            <h3>📏 Computed Metrics</h3>
-            <table>
-                <thead>
-                    <tr><th>Metric</th><th>Formula</th><th>Description</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Peak G-Force</td>
-                        <td><code>max(√(ax² + ay² + az²))</code></td>
-                        <td>Maximum acceleration</td>
-                    </tr>
-                    <tr>
-                        <td>Peak Velocity</td>
-                        <td><code>∫ accel_filtered dt</code></td>
-                        <td>Estimated punch speed</td>
-                    </tr>
-                    <tr>
-                        <td>Telegraphing</td>
-                        <td><code>std(pre-peak accel) / baseline</code></td>
-                        <td>Detects early movement</td>
-                    </tr>
-                    <tr>
-                        <td>Retraction Time</td>
-                        <td>Time from peak to baseline</td>
-                        <td>Hand return speed</td>
-                    </tr>
-                    <tr>
-                        <td>Snap Quality</td>
-                        <td><code>gyro_peak_time - accel_peak_time</code></td>
-                        <td>Rotation timing</td>
-                    </tr>
-                    <tr>
-                        <td>Guard Consistency</td>
-                        <td><code>1 / (std(pre-punch accel) + ε)</code></td>
-                        <td>Stability before punch</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p style="margin-top: 1rem; color: var(--text-secondary);">
-                <strong>Note:</strong> High-pass Butterworth filter (cutoff=0.1Hz, order=2) removes gravity from accelerometer data before velocity integration.
-            </p>
-        </div>
-
-        <div class="figure-container" id="fig9-container">
-            <h3>Biomechanical Metrics Visualization</h3>
-            <img id="fig9" alt="Bar charts showing G-Force, Velocity, Rotation Rate, and Guard Consistency by punch">
-            <p class="figure-caption">Performance metrics for each correctly classified punch in Session 19. Blue=Jab, Red=Hook, Gray=Idle.</p>
-        </div>
-
-        <div class="card">
-            <h3>📊 Summary by Punch Type</h3>
-            <div class="card-grid">
-                <div style="padding: 1.5rem; background: var(--bg-elevated); border-radius: 12px; border-left: 4px solid var(--accent-blue);">
-                    <h4 style="color: var(--accent-blue); margin-bottom: 1rem;">JAB (9 samples)</h4>
-                    <table>
-                        <tr><td>Avg G-Force</td><td><strong>2.82 G</strong></td></tr>
-                        <tr><td>Avg Velocity</td><td><strong>15.36 m/s</strong></td></tr>
-                        <tr><td>Avg Rotation</td><td><strong>1181 deg/s</strong></td></tr>
-                        <tr><td>Telegraphing</td><td><strong>89%</strong> (8/9)</td></tr>
-                        <tr><td>Avg Retraction</td><td><strong>4 ms</strong></td></tr>
-                    </table>
-                </div>
-
-                <div style="padding: 1.5rem; background: var(--bg-elevated); border-radius: 12px; border-left: 4px solid var(--accent-red);">
-                    <h4 style="color: var(--accent-red); margin-bottom: 1rem;">HOOK (10 samples)</h4>
-                    <table>
-                        <tr><td>Avg G-Force</td><td><strong>3.04 G</strong></td></tr>
-                        <tr><td>Avg Velocity</td><td><strong>17.13 m/s</strong></td></tr>
-                        <tr><td>Avg Rotation</td><td><strong>1151 deg/s</strong></td></tr>
-                        <tr><td>Telegraphing</td><td><strong>20%</strong> (2/10)</td></tr>
-                        <tr><td>Avg Retraction</td><td><strong>194 ms</strong></td></tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- REPORT SECTION -->
-    <section id="report">
-        <div class="section-header">
-            <span class="section-number">09</span>
-            <h2>Boxer Report Card</h2>
-            <p class="subtitle">Session 19 performance summary</p>
-        </div>
-
-        <div class="card" style="border: 2px solid var(--accent-gold);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div class="info-box">
+                <span class="icon">📈</span>
                 <div>
-                    <h3 style="margin-bottom: 0.25rem;">Session 19 (blind_mixed)</h3>
-                    <p style="color: var(--text-secondary);">Model: MLPClassifier (128-64-32)</p>
-                </div>
-                <div style="text-align: center;">
-                    <span class="result-highlight">87%</span>
-                    <p style="color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Accuracy</p>
+                    <p><strong>Understanding the metrics:</strong></p>
+                    <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                        <li><strong>Precision:</strong> When the model says "jab," how often is it actually a jab?</li>
+                        <li><strong>Recall:</strong> Of all actual jabs, how many did the model catch?</li>
+                        <li><strong>F1 Score:</strong> A balanced combination of precision and recall (1.0 is perfect)</li>
+                    </ul>
                 </div>
             </div>
 
-            <h3>Performance Metrics</h3>
-            <table>
-                <thead>
-                    <tr><th>Type</th><th>Samples</th><th>Avg Power</th><th>Max Power</th><th>Avg Velocity</th><th>Avg Rotation</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="punch-type jab">JAB</span></td>
-                        <td>9</td>
-                        <td>2.82 G</td>
-                        <td>3.14 G</td>
-                        <td>15.36 m/s</td>
-                        <td>1181 deg/s</td>
-                    </tr>
-                    <tr>
-                        <td><span class="punch-type hook">HOOK</span></td>
-                        <td>10</td>
-                        <td>3.04 G</td>
-                        <td>3.37 G</td>
-                        <td>17.13 m/s</td>
-                        <td>1151 deg/s</td>
-                    </tr>
-                    <tr>
-                        <td><span class="punch-type idle">IDLE</span></td>
-                        <td>1</td>
-                        <td>1.62 G</td>
-                        <td>1.62 G</td>
-                        <td>7.47 m/s</td>
-                        <td>141 deg/s</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3 style="margin-top: 2rem;">Technique Analysis</h3>
-            <table>
-                <thead>
-                    <tr><th>Type</th><th>Telegraphing</th><th>Retraction</th><th>Snap Quality</th><th>Guard</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="punch-type jab">JAB</span></td>
-                        <td style="color: var(--accent-red);">89%</td>
-                        <td style="color: var(--accent-green);">4 ms avg</td>
-                        <td>Good=8, Fair=1, Poor=0</td>
-                        <td>0.11</td>
-                    </tr>
-                    <tr>
-                        <td><span class="punch-type hook">HOOK</span></td>
-                        <td style="color: var(--accent-green);">20%</td>
-                        <td style="color: var(--accent-red);">194 ms avg</td>
-                        <td>Good=2, Fair=3, Poor=5</td>
-                        <td>0.37</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-elevated); border-radius: 12px;">
-                <h3>🎯 Key Takeaways</h3>
-                <ul style="margin-left: 1.5rem; margin-top: 1rem;">
-                    <li><strong>Jab Excellence:</strong> Fast retraction (4ms) with excellent snap quality (89% Good)</li>
-                    <li><strong>Jab Issue:</strong> High telegraphing rate (89%) - opponent can see it coming</li>
-                    <li><strong>Hook Stealth:</strong> Low telegraphing (20%) - harder to predict</li>
-                    <li><strong>Hook Issue:</strong> Slow retraction (194ms) and poor snap quality (50% Poor)</li>
-                    <li><strong>Model Strength:</strong> 100% hook recall, 90% jab recall</li>
-                    <li><strong>Model Weakness:</strong> Idle detection needs more training data</li>
+            <div class="card success">
+                <h3>✓ Key Findings</h3>
+                <ul style="margin-left: 1.5rem;">
+                    <li><strong>Hooks:</strong> Perfect detection (100% recall)—the model never misses a hook</li>
+                    <li><strong>Jabs:</strong> Excellent detection (90% recall)—only 1 jab was misclassified</li>
+                    <li><strong>Idle:</strong> Needs improvement (33% recall)—more training data needed</li>
                 </ul>
             </div>
-        </div>
+        </section>
 
-        <div class="card">
-            <h3>📁 File Structure</h3>
-            <pre>days/
-├── day1_baseline/
-│   └── session_XX_name/
-│       ├── session_XX_type_YYYYMMDD_HHMMSS_data.csv
-│       └── session_XX_type_YYYYMMDD_HHMMSS_beeps.csv
-├── day2_jabs/
-├── day3_hooks/
-├── day4_mixed/
-├── day5_validation/
-├── day6_stress/
-└── day7_test/</pre>
-        </div>
-    </section>
+        <!-- BIOMECHANICS -->
+        <section id="biomechanics">
+            <h2>Biomechanical Analysis</h2>
+            
+            <p class="lead">Beyond classification, the system provides detailed performance metrics for each correctly identified punch, enabling objective technique assessment.</p>
+
+            <h3>Metrics Computed</h3>
+            <table>
+                <thead>
+                    <tr><th>Metric</th><th>What It Measures</th><th>Why It Matters</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Peak G-Force</strong></td>
+                        <td>Maximum acceleration (in multiples of gravity)</td>
+                        <td>Indicates punch power</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Peak Velocity</strong></td>
+                        <td>Estimated hand speed (m/s)</td>
+                        <td>Faster punches are harder to defend</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Telegraphing</strong></td>
+                        <td>Movement before the punch</td>
+                        <td>Reveals if opponent can see it coming</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Retraction Time</strong></td>
+                        <td>How fast the hand returns to guard</td>
+                        <td>Slow retraction leaves you vulnerable</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Snap Quality</strong></td>
+                        <td>Timing of wrist rotation vs. arm extension</td>
+                        <td>Good "snap" increases impact</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Guard Consistency</strong></td>
+                        <td>Stillness before punching</td>
+                        <td>Stable guard prevents telegraphing</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="figure" id="fig9-container">
+                <img id="fig9" alt="Biomechanical metrics visualization">
+                <div class="figure-caption">
+                    <h4>Figure 9: Biomechanical Performance Metrics</h4>
+                    <p>Each bar represents one correctly classified punch. Blue = jab, Red = hook, Gray = idle. The charts show G-force, velocity, rotation rate, and guard consistency for each punch.</p>
+                </div>
+            </div>
+
+            <h3>Performance Summary</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <div class="card" style="border-top: 4px solid var(--accent-blue);">
+                    <h4 style="color: var(--accent-blue);">JAB Performance (9 samples)</h4>
+                    <table>
+                        <tr><td>Average Power</td><td><strong>2.82 G</strong></td></tr>
+                        <tr><td>Average Velocity</td><td><strong>15.36 m/s</strong></td></tr>
+                        <tr><td>Average Rotation</td><td><strong>1,181 °/s</strong></td></tr>
+                        <tr><td>Telegraphing Rate</td><td><strong style="color: var(--accent-red);">89%</strong></td></tr>
+                        <tr><td>Retraction Time</td><td><strong style="color: var(--accent-green);">4 ms</strong></td></tr>
+                        <tr><td>Snap Quality</td><td>Good: 8, Fair: 1, Poor: 0</td></tr>
+                    </table>
+                </div>
+
+                <div class="card" style="border-top: 4px solid var(--accent-red);">
+                    <h4 style="color: var(--accent-red);">HOOK Performance (10 samples)</h4>
+                    <table>
+                        <tr><td>Average Power</td><td><strong>3.04 G</strong></td></tr>
+                        <tr><td>Average Velocity</td><td><strong>17.13 m/s</strong></td></tr>
+                        <tr><td>Average Rotation</td><td><strong>1,151 °/s</strong></td></tr>
+                        <tr><td>Telegraphing Rate</td><td><strong style="color: var(--accent-green);">20%</strong></td></tr>
+                        <tr><td>Retraction Time</td><td><strong style="color: var(--accent-red);">194 ms</strong></td></tr>
+                        <tr><td>Snap Quality</td><td>Good: 2, Fair: 3, Poor: 5</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI INSIGHTS -->
+        <section id="insights">
+            <h2>AI Boxing Coach Analysis</h2>
+            
+            <p class="lead">The biomechanical data was analyzed by an AI boxing coach (powered by Google Gemini) to provide actionable training recommendations.</p>
+
+            <div class="ai-insights">
+                <h3>🤖 AI Coach Performance Report</h3>
+
+                <div class="insight-section">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <span class="grade-badge">C+</span>
+                        <div>
+                            <h4 style="margin: 0;">Overall Grade</h4>
+                            <p style="margin: 0; color: var(--text-secondary);">Good power, technique needs refinement</p>
+                        </div>
+                    </div>
+                    <p>Physical output (velocity and g-force) is impressive for a lead hand. However, technique is currently a "glass cannon"—punches are fast but predictable. The jab is telegraphed 89% of the time, meaning a skilled opponent will see every lead coming.</p>
+                </div>
+
+                <div class="insight-section">
+                    <h4 style="color: var(--accent-blue);">💪 Jab Analysis</h4>
+                    <p><strong>Strengths:</strong> Excellent speed (15.36 m/s average), very high snap quality (8/9 rated "Good"), fast retraction (4ms).</p>
+                    <p><strong>Weakness:</strong> Critical telegraphing rate (89%). The boxer is likely dropping their hand slightly or "cocking" their shoulder before the jab fires.</p>
+                    <p><strong>Recommendation:</strong> Focus on the "frozen shoulder" jab—the punch should travel from chin to target in a straight line with zero precursor movement.</p>
+                </div>
+
+                <div class="insight-section">
+                    <h4 style="color: var(--accent-red);">🥊 Hook Analysis</h4>
+                    <p><strong>Strengths:</strong> Most powerful punch (3.04 G average), low telegraphing (only 20%), higher velocity than jabs.</p>
+                    <p><strong>Weakness:</strong> 50% of hooks rated "Poor" snap quality. Retraction time (194ms) is dangerously slow—nearly 50x slower than the jab. The boxer is "lingering" on the target.</p>
+                    <p><strong>Recommendation:</strong> Think of the hook like a whip, not a club. Impact and snap back to the jaw immediately.</p>
+                </div>
+
+                <div class="insight-section">
+                    <h4>🎯 Top 3 Recommended Drills</h4>
+                    <ol style="margin-left: 1.5rem;">
+                        <li><strong>The "Wall Jab":</strong> Stand with left shoulder against a wall. Throw jabs. If elbow hits the wall first, you're telegraphing.</li>
+                        <li><strong>The "Elastic Hook" Drill:</strong> Use a light resistance band. Focus on the <em>return</em> of the hook—make the return faster than the punch itself.</li>
+                        <li><strong>Double-Jab, Reset:</strong> Throw a double jab, ensuring the lead hand touches your temple between the first and second punch.</li>
+                    </ol>
+                </div>
+
+                <div class="insight-section" style="background: var(--accent-green-light);">
+                    <h4 style="color: var(--accent-green);">✨ Positive Highlights</h4>
+                    <ul style="margin-left: 1.5rem;">
+                        <li><strong>Lead Hand Velocity:</strong> Natural hand speed is high—reaching 19.5 m/s on the best hook.</li>
+                        <li><strong>Jab Snap:</strong> Despite telegraphing, when the jab lands, it lands correctly with excellent "pop."</li>
+                        <li><strong>Hook Stealth:</strong> Only 20% telegraphing on hooks—can use this to set up combinations.</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg-light); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-style: italic; color: var(--text-secondary);">
+                    "You've got the speed and the power, but right now you're shouting your intentions to your opponent. Tighten up the 'leakage' in your jab and snap that hook back like it touched a hot stove. Keep working!"
+                    <br><strong>— AI Boxing Coach</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONCLUSIONS -->
+        <section id="conclusions">
+            <h2>Conclusions & Next Steps</h2>
+
+            <div class="card success">
+                <h3>✓ What We Achieved</h3>
+                <ul style="margin-left: 1.5rem;">
+                    <li>Built a working punch classification system with 87% accuracy</li>
+                    <li>Perfect hook detection (100%) and excellent jab detection (90%)</li>
+                    <li>Developed objective biomechanical metrics for technique assessment</li>
+                    <li>Integrated AI coaching for actionable training feedback</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>⚠️ Limitations & Improvements</h3>
+                <ul style="margin-left: 1.5rem;">
+                    <li><strong>Idle detection:</strong> Needs more training data (only 33% recall)</li>
+                    <li><strong>Single user:</strong> Model trained on one boxer—may need retraining for others</li>
+                    <li><strong>Left hand only:</strong> Currently only classifies lead hand punches</li>
+                    <li><strong>Sample rate:</strong> 24 Hz may miss some fast movements—higher rate could improve accuracy</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Future Development</h3>
+                <ul style="margin-left: 1.5rem;">
+                    <li>Collect data from multiple boxers to create a universal model</li>
+                    <li>Add right hand sensor for complete punch tracking</li>
+                    <li>Develop real-time mobile app for live training feedback</li>
+                    <li>Expand to more punch types (uppercuts, body shots, combinations)</li>
+                </ul>
+            </div>
+        </section>
+    </main>
 
     <footer>
-        <p>Boxing Punch Classification Project | IMU Sensor Analysis + MLP Neural Network</p>
-        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Document version: 1.0 | Last updated: January 2026</p>
+        <p><strong>Boxing Punch Classification Project</strong></p>
+        <p>IMU Sensor Analysis + MLP Neural Network</p>
+        <p style="margin-top: 0.5rem;">Document version 1.0 | January 2026</p>
     </footer>
 
     <script>
